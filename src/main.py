@@ -1,5 +1,6 @@
 import os
 from src.preprocessing import read_result_file, split_train_and_test
+from src.cnn import CNN
 
 result_path = os.path.join(os.path.dirname(__file__), "../assets/results/G1020.csv")
 
@@ -8,5 +9,6 @@ indices = list(range(len(image_ids)))
 
 train_indices, test_indices = split_train_and_test(indices, 0.2)
 
-print(train_indices)
-print(test_indices)
+cnn = CNN(image_ids, labels, train_indices, test_indices)
+print(cnn.train_indices)
+print(cnn.test_indices)
