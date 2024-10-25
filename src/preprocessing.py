@@ -1,4 +1,5 @@
 import csv
+import random
 
 def read_result_file(filepath):
     image_ids, labels = [], []
@@ -12,3 +13,13 @@ def read_result_file(filepath):
             labels.append(int(row[1]))
 
     return image_ids, labels
+
+
+def split_train_and_test(indices, ratio):
+    test_size = int(len(indices) * ratio)
+    random.shuffle(indices)
+
+    train_indices = indices[test_size:]
+    test_indices = indices[:test_size]
+
+    return train_indices, test_indices
