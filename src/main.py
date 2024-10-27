@@ -8,7 +8,7 @@ result_path = os.path.join(os.path.dirname(__file__), "../assets/results/G1020.c
 image_ids, labels = read_result_file(result_path)
 indices = list(range(len(image_ids)))
 
-train_indices, test_indices = split_train_and_test(indices, 0.2)
+train_indices, test_indices = split_train_and_test(indices, labels, ratio=0.2)
 
 train_images = np.array([load_and_preprocess_image(os.path.join(os.path.dirname(__file__), "../assets/images/" + image_ids[i])) for i in train_indices])
 train_labels = np.array([labels[i] for i in train_indices]).reshape(-1, 1)
@@ -21,9 +21,9 @@ test_images = test_images.transpose(0, 3, 1, 2)
 
 cnn = SimpleCNN()
 
-epochs = 10
+epochs = 15
 learning_rate = 0.01
-batch_size = 2
+batch_size = 4
 
 for epoch in range(epochs):
     for i in range(0, len(train_images), batch_size):

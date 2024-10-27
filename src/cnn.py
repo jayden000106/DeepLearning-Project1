@@ -35,7 +35,7 @@ def col2im(col, input_shape, filter_h, filter_w, stride=1, pad=0):
     return img[:, :, pad:H + pad, pad:W + pad]
 
 class SimpleCNN:
-    def __init__(self, input_dim=(3, 128, 128), conv_param=None, hidden_size=100, output_size=1, weight_init_std=0.01):
+    def __init__(self, input_dim=(3, 128, 128), conv_param=None, hidden_size=100, output_size=1):
         if conv_param is None:
             conv_param = {'filter_num': 32, 'filter_size': 3, 'pad': 1, 'stride': 1}
 
@@ -49,10 +49,17 @@ class SimpleCNN:
         pool_output_size = filter_num * (conv_output_size // 2) * (conv_output_size // 2)
 
         self.params = {}
-        self.params['W1'] = weight_init_std * np.random.randn(filter_num, input_dim[0], filter_size, filter_size)
+        weight_init_std = np.sqrt(2.0 / (filter_size * filter_size * input_dim[0]))
+        self.params['W1'] = weight_init_std * np.random.randn(
+            filter_num, input_dim[0], filter_size, filter_size
+        )
         self.params['b1'] = np.zeros(filter_num)
+
+        weight_init_std = np.sqrt(2.0 / pool_output_size)
         self.params['W2'] = weight_init_std * np.random.randn(pool_output_size, hidden_size)
         self.params['b2'] = np.zeros(hidden_size)
+
+        weight_init_std = np.sqrt(2.0 / hidden_size)
         self.params['W3'] = weight_init_std * np.random.randn(hidden_size, output_size)
         self.params['b3'] = np.zeros(output_size)
 
@@ -163,7 +170,7 @@ class SigmoidWithLoss:
         return self.loss
 
 
-    def backward(self):
+    def backward(self, dout=1):
         batch_size = self.t.shape[0]
         dx = (self.y - self.t) / batch_size
         return dx

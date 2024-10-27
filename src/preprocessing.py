@@ -17,12 +17,25 @@ def read_result_file(filepath):
     return image_ids, labels
 
 
-def split_train_and_test(indices, ratio):
-    test_size = int(len(indices) * ratio)
-    random.shuffle(indices)
+def split_train_and_test(indices, labels, ratio):
+    from collections import defaultdict
 
-    train_indices = indices[test_size:]
-    test_indices = indices[:test_size]
+    label_to_indices = defaultdict(list)
+    for idx in indices:
+        label = labels[idx]
+        label_to_indices[label].append(idx)
+
+    train_indices = []
+    test_indices = []
+
+    for label, idxs in label_to_indices.items():
+        random.shuffle(idxs)
+        split = int(len(idxs) * ratio)
+        test_indices.extend(idxs[:split])
+        train_indices.extend(idxs[split:])
+
+    random.shuffle(train_indices)
+    random.shuffle(test_indices)
 
     return train_indices, test_indices
 
